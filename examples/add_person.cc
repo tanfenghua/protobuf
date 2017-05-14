@@ -63,7 +63,7 @@ void AutoAddPerson(tutorial::Person* person) {
   phone_number->set_number("189862xxxxx");
   phone_number->set_type(tutorial::Person::MOBILE);
 
-  tutorial::Person::PhoneNumber* phone_number = person->add_phones();
+  phone_number = person->add_phones();
   phone_number->set_number("137862xxxxx");
   phone_number->set_type(tutorial::Person::MOBILE);
 }
