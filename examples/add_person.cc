@@ -50,6 +50,25 @@ void PromptForAddress(tutorial::Person* person) {
   }
 }
 
+
+void AutoAddPerson(tutorial::Person* person) {
+  static int id = 0;
+  id++;
+  person->set_id(id);
+
+  person->set_name("tanfenghua");
+  person->set_email("29357216@qq.com");
+
+  tutorial::Person::PhoneNumber* phone_number = person->add_phones();
+  phone_number->set_number("189862xxxxx");
+  phone_number->set_type(tutorial::Person::MOBILE);
+
+  tutorial::Person::PhoneNumber* phone_number = person->add_phones();
+  phone_number->set_number("137862xxxxx");
+  phone_number->set_type(tutorial::Person::MOBILE);
+}
+
+
 // Main function:  Reads the entire address book from a file,
 //   adds one person based on user input, then writes it back out to the same
 //   file.
@@ -77,7 +96,12 @@ int main(int argc, char* argv[]) {
   }
 
   // Add an address.
-  PromptForAddress(address_book.add_people());
+  // PromptForAddress(address_book.add_people());
+
+  for (int i = 0; i < 10000; i++)
+  {
+    AutoAddPerson(address_book.add_people());
+  }
 
   {
     // Write the new address book back to disk.
