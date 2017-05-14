@@ -4,6 +4,8 @@
 #include <fstream>
 #include <string>
 #include "addressbook.pb.h"
+#include <sys/time.h> 
+
 using namespace std;
 
 // This function fills in a Person message based on user input.
@@ -68,6 +70,28 @@ void AutoAddPerson(tutorial::Person* person) {
   phone_number->set_type(tutorial::Person::MOBILE);
 }
 
+void timeval_subtract(struct timeval* result, struct timeval* x, struct timeval* y) 
+{
+  int nsec; 
+  if ( x->tv_sec>y->tv_sec ) 
+  {
+    return; 
+  }
+
+  if ( (x->tv_sec==y->tv_sec) && (x->tv_usec>y->tv_usec) ) 
+  {
+    return;
+  }
+
+  result->tv_sec = ( y->tv_sec-x->tv_sec ); 
+  result->tv_usec = ( y->tv_usec-x->tv_usec ); 
+
+  if (result->tv_usec<0) 
+  {
+    result->tv_sec--;
+    result->tv_usec+=1000000;
+  }
+}
 
 // Main function:  Reads the entire address book from a file,
 //   adds one person based on user input, then writes it back out to the same
@@ -97,11 +121,17 @@ int main(int argc, char* argv[]) {
 
   // Add an address.
   // PromptForAddress(address_book.add_people());
-
+  struct timeval time_1, time_2, time_3, diff;
+  
+  gettimeofday(&time_1,0); 
   for (int i = 0; i < 10000; i++)
   {
     AutoAddPerson(address_book.add_people());
   }
+  gettimeofday(&time_2,0); 
+  timeval_subtract(&diff,&time_1,&time_2); 
+
+  cout << "time1-2 sec:" <<diff.tv_sec << ", usec:" << diff.tv_usec << endl;
 
   {
     // Write the new address book back to disk.
@@ -111,6 +141,12 @@ int main(int argc, char* argv[]) {
       return -1;
     }
   }
+
+  gettimeofday(&time_3,0); 
+  memset(&diff, 0, sizeof(diff));
+  timeval_subtract(&diff,&time_2,&time_3); 
+
+  cout << "time2-3 sec:" <<diff.tv_sec << ", usec:" << diff.tv_usec << endl;
 
   // Optional:  Delete all global objects allocated by libprotobuf.
   google::protobuf::ShutdownProtobufLibrary();
